@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from '../_lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { supabase } from '../_lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -11,16 +10,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: 'Invalid payload: expected { accounts: [...] }' });
         }
 
-        for (const acc of accounts) {
-            const id = acc.id || uuidv4();
-            await setDoc(doc(db, 'accounts', id), {
-                id,
-                email: acc.email || 'imported@example.com',
-                targetDate: acc.targetDate || new Date().toISOString(),
-                reminder10MinSent: acc.reminder10MinSent ?? false,
-                readySent: acc.readySent ?? false,
-            });
-        }
+        const payload = accounts.map(acc => ({
+            id: acc.id || uuidv4(),
+            email: acc.email || 'imported@example.com',
+            target_date: acc.targetDate || new Date().toISOString(),
+            reminder_10_min_sent: acc.reminder10MinSent ?? false,
+            ready_sent: acc.readySent ?? false,
+        }));
+
+        const { error } = await supabase.from('accounts').upsert(payload);
+        if (error) throw error;
+
         res.json({ success: true });
     } catch (err) {
         console.error(err);

@@ -1,32 +1,47 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from '../_lib/firebase';
-import { collection, getDocs, doc, setDoc, deleteDoc, addDoc } from 'firebase/firestore';
+import { supabase } from '../_lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
         // GET /api/accounts — lista todas
         if (req.method === 'GET') {
-            const snapshot = await getDocs(collection(db, 'accounts'));
-            const accounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-            return res.json(accounts);
+            const { data: accounts, error } = await supabase.from('accounts').select('*');
+            if (error) throw error;
+            return res.json(accounts || []);
         }
 
         // POST /api/accounts — cria nova conta
         if (req.method === 'POST') {
             const { email, targetDate } = req.body;
             const id = uuidv4();
-            const newAccount = { id, email, targetDate, reminder10MinSent: false, readySent: false };
-            await setDoc(doc(db, 'accounts', id), newAccount);
-            return res.status(201).json(newAccount);
+            const newAccount = {
+                id,
+                email,
+                target_date: targetDate,
+                reminder_10_min_sent: false,
+                ready_sent: false
+            };
+
+            const { error } = await supabase.from('accounts').insert(newAccount);
+            if (error) throw error;
+
+            // Return with original camelCase names to not break frontend immediately, 
+            // or frontend expects camelCase. Frontend expects targetDate.
+            return res.status(201).json({
+                id: newAccount.id,
+                email: newAccount.email,
+                targetDate: newAccount.target_date,
+                reminder10MinSent: newAccount.reminder_10_min_sent,
+                readySent: newAccount.ready_sent
+            });
         }
 
         // DELETE /api/accounts — limpa tudo
         if (req.method === 'DELETE') {
-            const snapshot = await getDocs(collection(db, 'accounts'));
-            for (const d of snapshot.docs) {
-                await deleteDoc(d.ref);
-            }
+            // In Supabase, deleting all rows easily: delete() with neq or just truncate
+            const { error } = await supabase.from('accounts').delete().filter('id', 'not.is', null);
+            if (error) throw error;
             return res.json({ success: true });
         }
 

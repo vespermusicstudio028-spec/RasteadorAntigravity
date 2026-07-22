@@ -1,26 +1,30 @@
 import webpush from 'web-push';
-import { db } from './firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { supabase } from './supabase';
 
 let initialized = false;
 
 export async function initVapid() {
     if (initialized) return;
 
-    const vapidDocRef = doc(db, 'config', 'vapid');
-    const snapshot = await getDoc(vapidDocRef);
+    const { data: snapshot, error: fetchError } = await supabase
+        .from('config')
+        .select('data')
+        .eq('id', 'vapid')
+        .maybeSingle();
 
     let vapidKeys: { publicKey: string; privateKey: string };
 
-    if (snapshot.exists()) {
-        vapidKeys = snapshot.data() as { publicKey: string; privateKey: string };
+    if (snapshot && snapshot.data) {
+        vapidKeys = snapshot.data as { publicKey: string; privateKey: string };
     } else {
         vapidKeys = webpush.generateVAPIDKeys();
-        await setDoc(vapidDocRef, vapidKeys);
+        await supabase
+            .from('config')
+            .upsert({ id: 'vapid', data: vapidKeys });
     }
 
     webpush.setVapidDetails(
-        'mailto:investidorbtc22@gmail.com',
+        'mailto:investidorbtc22@gmail.com', // Change this to your email if needed
         vapidKeys.publicKey,
         vapidKeys.privateKey
     );
@@ -30,10 +34,14 @@ export async function initVapid() {
 }
 
 export async function getPublicKey(): Promise<string> {
-    const vapidDocRef = doc(db, 'config', 'vapid');
-    const snapshot = await getDoc(vapidDocRef);
-    if (snapshot.exists()) {
-        return snapshot.data().publicKey as string;
+    const { data: snapshot } = await supabase
+        .from('config')
+        .select('data')
+        .eq('id', 'vapid')
+        .maybeSingle();
+
+    if (snapshot && snapshot.data) {
+        return (snapshot.data as any).publicKey as string;
     }
     const key = await initVapid();
     return key ?? '';
