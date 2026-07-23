@@ -50,6 +50,7 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
               <input
                 type="number"
                 min="0"
+                max="500"
                 value={days}
                 onChange={(e) => setDays(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-12 text-right font-mono"
@@ -62,7 +63,7 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
               <input
                 type="number"
                 min="0"
-                max="23"
+                max="500"
                 value={hours}
                 onChange={(e) => setHours(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-12 text-right font-mono"
@@ -75,7 +76,7 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
               <input
                 type="number"
                 min="0"
-                max="59"
+                max="500"
                 value={minutes}
                 onChange={(e) => setMinutes(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-14 text-right font-mono"
