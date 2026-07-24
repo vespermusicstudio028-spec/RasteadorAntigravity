@@ -7,29 +7,30 @@ interface AccountFormProps {
 
 export default function AccountForm({ onAdd }: AccountFormProps) {
   const [email, setEmail] = useState('');
-  const [days, setDays] = useState('0');
-  const [hours, setHours] = useState('0');
-  const [minutes, setMinutes] = useState('0');
+  const [days, setDays] = useState('');
+  const [hours, setHours] = useState('');
+  const [minutes, setMinutes] = useState('');
+
+  const parseVal = (v: string) => {
+    const n = parseInt(v, 10);
+    return isNaN(n) || n < 0 ? 0 : Math.min(n, 500);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-
-    onAdd(
-      email,
-      parseInt(days, 10) || 0,
-      parseInt(hours, 10) || 0,
-      parseInt(minutes, 10) || 0
-    );
-
+    onAdd(email, parseVal(days), parseVal(hours), parseVal(minutes));
     setEmail('');
-    setDays('0');
-    setHours('0');
-    setMinutes('0');
+    setDays('');
+    setHours('');
+    setMinutes('');
   };
 
+  const inputClass =
+    'w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-3 text-zinc-100 text-center font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none';
+
   return (
-    <form onSubmit={handleSubmit} className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex flex-col gap-6">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div>
         <label className="block text-sm font-medium text-zinc-400 mb-2">E-mail da Conta</label>
         <input
@@ -43,53 +44,50 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-zinc-400 mb-2">Tempo até a recarga</label>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <div className="relative">
-              <input
-                type="number"
-                min="0"
-                max="500"
-                value={days}
-                onChange={(e) => setDays(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-12 text-right font-mono"
-              />
-              <span className="absolute right-4 top-3.5 text-zinc-500 text-sm pointer-events-none">d</span>
-            </div>
+        <label className="block text-sm font-medium text-zinc-400 mb-3">Tempo até a recarga</label>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="flex flex-col items-center gap-1">
+            <input
+              type="number"
+              min="0"
+              max="500"
+              placeholder="0"
+              value={days}
+              onChange={(e) => setDays(e.target.value)}
+              className={inputClass}
+            />
+            <span className="text-xs text-zinc-500 font-medium">DIAS</span>
           </div>
-          <div>
-            <div className="relative">
-              <input
-                type="number"
-                min="0"
-                max="500"
-                value={hours}
-                onChange={(e) => setHours(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-12 text-right font-mono"
-              />
-              <span className="absolute right-4 top-3.5 text-zinc-500 text-sm pointer-events-none">h</span>
-            </div>
+          <div className="flex flex-col items-center gap-1">
+            <input
+              type="number"
+              min="0"
+              max="500"
+              placeholder="0"
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+              className={inputClass}
+            />
+            <span className="text-xs text-zinc-500 font-medium">HORAS</span>
           </div>
-          <div>
-            <div className="relative">
-              <input
-                type="number"
-                min="0"
-                max="500"
-                value={minutes}
-                onChange={(e) => setMinutes(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all pr-14 text-right font-mono"
-              />
-              <span className="absolute right-4 top-3.5 text-zinc-500 text-sm pointer-events-none">min</span>
-            </div>
+          <div className="flex flex-col items-center gap-1">
+            <input
+              type="number"
+              min="0"
+              max="500"
+              placeholder="0"
+              value={minutes}
+              onChange={(e) => setMinutes(e.target.value)}
+              className={inputClass}
+            />
+            <span className="text-xs text-zinc-500 font-medium">MINUTOS</span>
           </div>
         </div>
       </div>
 
       <button
         type="submit"
-        className="mt-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+        className="mt-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
       >
         <Plus size={20} />
         Adicionar Rastreador
