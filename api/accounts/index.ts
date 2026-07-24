@@ -8,7 +8,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (req.method === 'GET') {
             const { data: accounts, error } = await supabase.from('accounts').select('*');
             if (error) throw error;
-            return res.json(accounts || []);
+
+            const mappedAccounts = (accounts || []).map(acc => ({
+                id: acc.id,
+                email: acc.email,
+                targetDate: acc.target_date,
+                reminder10MinSent: acc.reminder_10_min_sent,
+                readySent: acc.ready_sent
+            }));
+            return res.json(mappedAccounts);
         }
 
         // POST /api/accounts — cria nova conta
