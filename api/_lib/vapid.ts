@@ -1,10 +1,12 @@
 import webpush from 'web-push';
-import { supabase } from './supabase';
+import { getSupabase } from './supabase';
 
 let initialized = false;
 
 export async function initVapid() {
     if (initialized) return;
+
+    const supabase = getSupabase();
 
     const { data: snapshot, error: fetchError } = await supabase
         .from('config')
@@ -34,6 +36,7 @@ export async function initVapid() {
 }
 
 export async function getPublicKey(): Promise<string> {
+    const supabase = getSupabase();
     const { data: snapshot } = await supabase
         .from('config')
         .select('data')

@@ -1,9 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import webpush from 'web-push';
-import { supabase } from './_lib/supabase';
+import { getSupabase } from './_lib/supabase';
 import { getPublicKey } from './_lib/vapid';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    if (req.method !== 'POST') return res.status(405).end();
+
+    const supabase = getSupabase();
     // Configured in vercel.json to run every minute
     // CRON request needs authentication? Vercel secures it via Authorization header automatically if configured
     // Vercel Cron sends a Bearer token in development, you can check it. But let's keep it simple.
@@ -69,6 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 }
 
 async function broadcastPush(subscriptions: any[], payload: any) {
+    const supabase = getSupabase();
     for (const sub of subscriptions) {
         try {
             await webpush.sendNotification(sub.subscription_data, JSON.stringify(payload));

@@ -1,10 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabase } from '../_lib/supabase';
+import { getSupabase } from '../_lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
-        // GET /api/accounts — lista todas
+        const supabase = getSupabase();
+
+        // GET /api/accounts — lista todas as contas
         if (req.method === 'GET') {
             const { data: accounts, error } = await supabase.from('accounts').select('*');
             if (error) throw error;
@@ -12,20 +14,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const mappedAccounts = (accounts || []).map(acc => ({
                 id: acc.id,
                 email: acc.email,
+                link: acc.link || '',
                 targetDate: acc.target_date,
                 reminder10MinSent: acc.reminder_10_min_sent,
-                readySent: acc.ready_sent
+                readySent: acc.ready_sent,
+                createdAt: acc.created_at
             }));
             return res.json(mappedAccounts);
         }
 
-        // POST /api/accounts — cria nova conta
+        // POST /api/accounts — cria novo rastreador
         if (req.method === 'POST') {
-            const { email, targetDate } = req.body;
+            const { email, link, targetDate } = req.body;
             const id = uuidv4();
             const newAccount = {
                 id,
                 email,
+                link: link ? String(link).trim() : null,
                 target_date: targetDate,
                 reminder_10_min_sent: false,
                 ready_sent: false
@@ -34,11 +39,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             const { error } = await supabase.from('accounts').insert(newAccount);
             if (error) throw error;
 
-            // Return with original camelCase names to not break frontend immediately, 
-            // or frontend expects camelCase. Frontend expects targetDate.
             return res.status(201).json({
                 id: newAccount.id,
                 email: newAccount.email,
+                link: newAccount.link || '',
                 targetDate: newAccount.target_date,
                 reminder10MinSent: newAccount.reminder_10_min_sent,
                 readySent: newAccount.ready_sent
@@ -47,7 +51,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // DELETE /api/accounts — limpa tudo
         if (req.method === 'DELETE') {
-            // In Supabase, deleting all rows easily: delete() with neq or just truncate
             const { error } = await supabase.from('accounts').delete().filter('id', 'not.is', null);
             if (error) throw error;
             return res.json({ success: true });
