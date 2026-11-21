@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Link as LinkIcon, Calendar, Clock } from 'lucide-react';
+import { Plus, Clock } from 'lucide-react';
 
 interface AccountFormProps {
   onAdd: (email: string, days: number, hours: number, minutes: number, link?: string, customTargetDate?: string) => void;
@@ -7,7 +7,6 @@ interface AccountFormProps {
 
 export default function AccountForm({ onAdd }: AccountFormProps) {
   const [email, setEmail] = useState('');
-  const [link, setLink] = useState('');
   const [days, setDays] = useState('');
   const [hours, setHours] = useState('');
   const [minutes, setMinutes] = useState('');
@@ -41,13 +40,12 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
     if (!email) return;
 
     if (mode === 'exact' && exactDateTime) {
-      onAdd(email, 0, 0, 0, link, new Date(exactDateTime).toISOString());
+      onAdd(email, 0, 0, 0, undefined, new Date(exactDateTime).toISOString());
     } else {
-      onAdd(email, parseVal(days), parseVal(hours), parseVal(minutes), link);
+      onAdd(email, parseVal(days), parseVal(hours), parseVal(minutes));
     }
 
     setEmail('');
-    setLink('');
     setDays('');
     setHours('');
     setMinutes('');
@@ -68,21 +66,6 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="ex. usuario@exemplo.com"
           className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-zinc-400 mb-2 flex items-center gap-1.5">
-          <LinkIcon size={14} className="text-zinc-500" />
-          Link / URL da Conta ou Projeto
-          <span className="text-xs text-zinc-500 font-normal">(Opcional)</span>
-        </label>
-        <input
-          type="url"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          placeholder="ex. https://chat.google.com ou link da IA"
-          className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
         />
       </div>
 

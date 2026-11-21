@@ -239,7 +239,7 @@ export default function App() {
               </h1>
             </div>
             <p className="text-zinc-400 mt-2 text-sm sm:text-base">
-              Rastreie links, horários e recargas de IA salvos diretamente no seu Supabase.
+              Rastreie horários e recargas de IA salvos diretamente no seu Supabase.
             </p>
             <div className="mt-2 flex items-center gap-2 text-xs">
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
@@ -362,7 +362,7 @@ export default function App() {
                   <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                   <input
                     type="text"
-                    placeholder="Buscar por e-mail ou link..."
+                    placeholder="Buscar por e-mail..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all w-full sm:w-60"
@@ -386,7 +386,7 @@ export default function App() {
                   Nenhum rastreador encontrado
                 </h3>
                 <p className="text-zinc-500 text-sm max-w-xs">
-                  Adicione um e-mail, link e o tempo de recarga para começar a salvar e monitorar suas IAs no Supabase.
+                  Adicione um e-mail e o tempo de recarga para começar a salvar e monitorar suas IAs no Supabase.
                 </p>
               </div>
             ) : (
