@@ -163,7 +163,7 @@ export default function AccountForm({ onAdd }: AccountFormProps) {
         className="mt-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl py-3 px-4 flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 cursor-pointer shadow-lg shadow-blue-600/20"
       >
         <Plus size={20} />
-        Adicionar ao Supabase
+        Adicionar Rastreador
       </button>
     </form>
   );

@@ -13,14 +13,12 @@ import {
   Upload,
   Download,
   Trash2,
-  Database,
   ExternalLink,
 } from 'lucide-react';
 import AccountForm from './components/AccountForm';
 import AccountCard from './components/AccountCard';
 import { subscribeUserToPush, isPushSubscribed } from './lib/push';
 import { accountService } from './lib/accountService';
-import { isSupabaseClientConfigured } from './lib/supabaseClient';
 import type { Account } from './types';
 
 export default function App() {
@@ -239,14 +237,8 @@ export default function App() {
               </h1>
             </div>
             <p className="text-zinc-400 mt-2 text-sm sm:text-base">
-              Rastreie horários e recargas de IA salvos diretamente no seu Supabase.
+              Gerencie seus limites de IA e receba alertas push quando recarregar.
             </p>
-            <div className="mt-2 flex items-center gap-2 text-xs">
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
-                <Database size={12} className={isSupabaseClientConfigured ? 'text-emerald-400' : 'text-blue-400'} />
-                Supabase: <strong className="text-zinc-200">piyzjodvmejqxvpwzohp</strong>
-              </span>
-            </div>
           </div>
 
           <div className="flex flex-row md:flex-col items-center md:items-end gap-4 w-full md:w-auto justify-between md:justify-start">
@@ -386,7 +378,7 @@ export default function App() {
                   Nenhum rastreador encontrado
                 </h3>
                 <p className="text-zinc-500 text-sm max-w-xs">
-                  Adicione um e-mail e o tempo de recarga para começar a salvar e monitorar suas IAs no Supabase.
+                  Adicione um e-mail e o tempo de recarga para começar a salvar e monitorar suas IAs.
                 </p>
               </div>
             ) : (
